@@ -1,0 +1,20 @@
+#    ███╗░░░███╗░█████╗░██████╗░  ██████╗░██╗░░░██╗███╗░░██╗░██████╗░███████╗░█████╗░███╗░░██╗░██████╗
+#    ████╗░████║██╔══██╗██╔══██╗  ██╔══██╗██║░░░██║████╗░██║██╔════╝░██╔════╝██╔══██╗████╗░██║██╔════╝
+#    ██╔████╔██║███████║██████╔╝  ██║░░██║██║░░░██║██╔██╗██║██║░░██╗░█████╗░░██║░░██║██╔██╗██║╚█████╗░
+#    ██║╚██╔╝██║██╔══██║██╔═══╝░  ██║░░██║██║░░░██║██║╚████║██║░░╚██╗██╔══╝░░██║░░██║██║╚████║░╚═══██╗
+#    ██║░╚═╝░██║██║░░██║██║░░░░░  ██████╔╝╚██████╔╝██║░╚███║╚██████╔╝███████╗╚█████╔╝██║░╚███║██████╔╝
+#    ╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░░░░  ╚═════╝░░╚═════╝░╚═╝░░╚══╝░╚═════╝░╚══════╝░╚════╝░╚═╝░░╚══╝╚═════╝░
+# Config version: 1.0.0
+
+commands:
+  no-permission: "&cYou do not have the required permission to use this command!"
+  cooldown: "&cThis command is on a cooldown for {cd} more seconds!"
+  sent-lobby: "&aYou were sent to the lobby!"
+  help-format: "&b{command} &7{aliases} &8- &f{description}"
+config:
+  dungeon-created: "&aSuccessfully created dungeon with name \"{dungeon}\"!"
+  dungeon-spawn-set: "&aSet the spawn point of \"{dungeon}\" to &e{location}&a."
+  config-reloaded: "&bSuccessfully reloaded configuration!"
+game:
+  starting: "&aStarting dungeon in &e{seconds} &aseconds."
+  dungeon-not-found: "&cNo dungeon found by the name of \"{dungeon}\"!"

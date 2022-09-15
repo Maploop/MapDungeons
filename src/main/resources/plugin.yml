@@ -1,0 +1,4 @@
+name: MapDungeons
+version: '${project.version}'
+main: me.maploop.mapdungeons.MapDungeons
+api-version: 1.18
