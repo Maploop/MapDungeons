@@ -12,11 +12,13 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ConfigGUI extends GUI
 {
@@ -28,6 +30,11 @@ public class ConfigGUI extends GUI
     }
 
     @Override
+    public void onClose(InventoryCloseEvent e) throws ExecutionException {
+        dungeon.save();
+    }
+
+    @Override
     public void onOpen(GUIOpenEvent e) {
         Player player = e.getPlayer();
         border(SUtil.getStack(Material.BLACK_STAINED_GLASS_PANE, 0).build());
@@ -36,41 +43,18 @@ public class ConfigGUI extends GUI
         {
             @Override
             public void run(InventoryClickEvent e) {
-                dungeon.save();
-                player.sendMessage("§aSaved dungeon " + dungeon.getName() + "!");
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                player.closeInventory();
-            }
-
-            @Override
-            public int getSlot() {
-                return 31;
-            }
-
-            @Override
-            public ItemStack getItem() {
-                return SUtil.getStack(Material.FILLED_MAP, 0).glow().name("&a&lSave")
-                        .lore("&7Click this to save all of the", "&7changes you have made to",
-                                "&f" + dungeon.getName() + "&7 so far!",
-                                "",
-                                "&eClick to save!").build();
-            }
-        });
-
-        set(new GUIClickableItem()
-        {
-            @Override
-            public void run(InventoryClickEvent e) {
                 if (dungeon.getSpawnPoint() == null) {
                     dungeon.setSpawnPoint(player.getLocation());
-                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()))));
-                    player.sendMessage("&7Make sure to click save in the configuration menu to save your dungeon's config!");
+                    dungeon.save();
+                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()), Map.entry("{location}", SUtil.prettify(player.getLocation())))));
+                    player.sendMessage("§7Make sure to click save in the configuration menu to save your dungeon's config!");
                     player.closeInventory();
                     return;
                 }
                 if (dungeon.getSpawnPoint() != null && e.getClick().equals(ClickType.RIGHT)) {
                     dungeon.setSpawnPoint(player.getLocation());
-                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()))));
+                    dungeon.save();
+                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()), Map.entry("{location}", SUtil.prettify(player.getLocation())))));
                     player.sendMessage("§7Make sure to click save in the configuration menu to save your dungeon's config!");
                     player.closeInventory();
                 } else {
@@ -108,22 +92,29 @@ public class ConfigGUI extends GUI
         {
             @Override
             public void run(InventoryClickEvent e) {
-                if (dungeon.getSpawnPoint() == null) {
-                    dungeon.setSpawnPoint(player.getLocation());
-                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()))));
-                    player.sendMessage("&7Make sure to click save in the configuration menu to save your dungeon's config!");
-                    player.closeInventory();
-                    return;
-                }
-                if (dungeon.getSpawnPoint() != null && e.getClick().equals(ClickType.RIGHT)) {
-                    dungeon.setSpawnPoint(player.getLocation());
-                    player.sendMessage(Messages.get("config.dungeon-spawn-set", Map.ofEntries(Map.entry("{dungeon}", dungeon.getName()))));
-                    player.sendMessage("§7Make sure to click save in the configuration menu to save your dungeon's config!");
-                    player.closeInventory();
-                } else {
-                    player.teleport(dungeon.getSpawnPoint());
-                    player.sendMessage("§aTeleported!");
-                }
+                dungeon.setEnabled(!dungeon.isEnabled());
+                dungeon.save();
+                SUtil.delay(() -> new ConfigGUI(dungeon).open(player), 2);
+            }
+
+            @Override
+            public int getSlot() {
+                return 13;
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return SUtil.getStack(dungeon.isEnabled() ? Material.LIME_DYE : Material.GRAY_DYE, 0).name("&fEnabled: " + (dungeon.isEnabled() ? "&aYes" : "&cNo"))
+                        .lore("&7This option determines if the", "&7dungeon is currently playable by", "&7players or is still being setup",
+                                "&7by an administrator.", "", (dungeon.isEnabled() ? "&eClick to disable!" : "&eClick to enable!")).build();
+            }
+        });
+
+        set(new GUIClickableItem()
+        {
+            @Override
+            public void run(InventoryClickEvent e) {
+                new SpawnersGUI(dungeon).open(player);
             }
 
             @Override
@@ -136,10 +127,12 @@ public class ConfigGUI extends GUI
                 List<String> lore = new ArrayList<>();
 
                 if (dungeon.getMobSpawns().size() > 0) {
-                    for (Location loc : dungeon.getMobSpawns()) {
+                    for (int i = 0; i < 5; i++) {
+                        Location loc = dungeon.getMobSpawns().get(i);
                         lore.add("&8- &f" + SUtil.prettify(loc));
                     }
-                    lore.add("&7About " + dungeon.getMobSpawns().size() + " spawners set.");
+                    if (dungeon.getMobSpawns().size() > 5)
+                        lore.add("&fand " + (dungeon.getMobSpawns().size() - 5) + " more...");
                     lore.add("");
                     lore.add("&eClick to edit!");
                 } else {
@@ -148,7 +141,7 @@ public class ConfigGUI extends GUI
                     lore.add("&eClick to set!");
                 }
 
-                return SUtil.getStack(Material.LIGHT_WEIGHTED_PRESSURE_PLATE, 0).name("&eMob Spawners")
+                return SUtil.getStack(Material.LIGHT_WEIGHTED_PRESSURE_PLATE, 0).name("&dMob Spawners")
                         .glow(dungeon.getMobSpawns().size() > 0).lore(lore).build();
             }
         });

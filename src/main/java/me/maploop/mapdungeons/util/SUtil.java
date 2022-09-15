@@ -1,6 +1,9 @@
 package me.maploop.mapdungeons.util;
 
 import me.maploop.mapdungeons.MapDungeons;
+import me.maploop.mapdungeons.gui.GUI;
+import me.maploop.mapdungeons.gui.GUIOpenEvent;
+import me.maploop.mapdungeons.gui.guiitem.GUIClickableItem;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -9,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,6 +20,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -271,6 +276,50 @@ public class SUtil {
                 .replaceAll("%%bold%%", "§l")
                 .replaceAll("%%strike%%", "§m")
                 .replaceAll("%%underlined%%", "§n"));
+    }
+
+    public static void openConfirmationForm(Player player, GUI back, String confirm, String cancel, Consumer<Player> onConfirm) {
+        new GUI("Confirm", 27) {
+            @Override
+            public void onOpen(GUIOpenEvent e) {
+                fill(SUtil.getStack(Material.BLACK_STAINED_GLASS_PANE, 0).build());
+                set(new GUIClickableItem()
+                {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        e.getWhoClicked().closeInventory();
+                        onConfirm.accept((Player) e.getWhoClicked());
+                    }
+
+                    @Override
+                    public int getSlot() {
+                        return 11;
+                    }
+
+                    @Override
+                    public ItemStack getItem() {
+                        return SUtil.getStack(Material.GREEN_TERRACOTTA, 0).name("&aConfirm").lore("&7" + confirm).build();
+                    }
+                });
+
+                set(new GUIClickableItem() {
+                    @Override
+                    public void run(InventoryClickEvent e) {
+                        back.open((Player) e.getWhoClicked());
+                    }
+
+                    @Override
+                    public int getSlot() {
+                        return 15;
+                    }
+
+                    @Override
+                    public ItemStack getItem() {
+                        return SUtil.getStack(Material.RED_TERRACOTTA, 0).name("&cCancel").lore("&7" + cancel).build();
+                    }
+                });
+            }
+        }.open(player);
     }
 
     private static String color(String string) {

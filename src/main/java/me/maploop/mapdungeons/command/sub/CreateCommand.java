@@ -4,6 +4,8 @@ import me.maploop.mapdungeons.command.CommandParameters;
 import me.maploop.mapdungeons.command.CommandSource;
 import me.maploop.mapdungeons.command.DCommand;
 import me.maploop.mapdungeons.data.ServerData;
+import me.maploop.mapdungeons.gui.guis.ConfigGUI;
+import me.maploop.mapdungeons.session.Dungeon;
 import me.maploop.mapdungeons.util.Messages;
 import org.bukkit.command.CommandSender;
 
@@ -25,6 +27,7 @@ public class CreateCommand extends DCommand
         }
         ServerData.createDungeon(args[1]);
         send(Messages.get("config.dungeon-created", Map.ofEntries(Map.entry("{dungeon}", args[1]))));
+        new ConfigGUI(Dungeon.get(args[1])).open(sender.getPlayer());
     }
 
     @Override

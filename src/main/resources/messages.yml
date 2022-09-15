@@ -15,6 +15,10 @@ config:
   dungeon-created: "&aSuccessfully created dungeon with name \"{dungeon}\"!"
   dungeon-spawn-set: "&aSet the spawn point of \"{dungeon}\" to &e{location}&a."
   config-reloaded: "&bSuccessfully reloaded configuration!"
+  spawner-set: "&aSpawner location modified!"
+  teleport: "&aTeleported!"
+  spawner-added: "&aAdded a spawner to \"{dungeon}\"!"
+  spawner-deleted: "&cDeleted a spawner from \"{dungeon}\""
 game:
   starting: "&aStarting dungeon in &e{seconds} &aseconds."
   dungeon-not-found: "&cNo dungeon found by the name of \"{dungeon}\"!"

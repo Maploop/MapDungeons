@@ -119,6 +119,7 @@ public abstract class DCommand implements CommandExecutor, TabCompleter
             if (args.length <= 1) {
                 List<String> list = new ArrayList<>();
                 MapDungeons.getPlugin().cl.commands.forEach(entry -> list.add(entry.name));
+
                 return list;
             } else {
                 for (DCommand c : MapDungeons.getPlugin().cl.commands) {

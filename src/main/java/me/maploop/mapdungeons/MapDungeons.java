@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
+import java.util.logging.Logger;
+
 public final class MapDungeons extends JavaPlugin
 {
     public static final String PLUGIN_VERSION = "1.0.0";
@@ -70,5 +72,9 @@ public final class MapDungeons extends JavaPlugin
 
     public static MapDungeons getPlugin() {
         return plugin;
+    }
+
+    public static Logger logger() {
+        return plugin.getServer().getLogger();
     }
 }

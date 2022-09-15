@@ -1,6 +1,7 @@
 package me.maploop.mapdungeons.data;
 
 import me.maploop.mapdungeons.MapDungeons;
+import me.maploop.mapdungeons.session.Dungeon;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -33,17 +34,30 @@ public class ServerData
 
     public static void setMobSpawns(String dun, List<Location> points) {
         plugin.getServerData().set("dungeons." + dun + ".spawners", points);
-        plugin.getServerData().save();
     }
 
     public static void setSpawnFor(String dungeon, Location loc) {
         plugin.getServerData().set("dungeons." + dungeon + ".spawn", loc);
-        plugin.getServerData().save();
     }
 
     public static void createDungeon(String d) {
         plugin.getServerData().set("dungeons." + d + ".name", d);
+    }
+
+    public static boolean isEnabled(String dungeon) {
+        return plugin.getServerData().getBoolean("dungeons." + dungeon + ".enabled", false);
+    }
+
+    public static void setEnabled(String dungeon, boolean enabled) {
+        plugin.getServerData().set("dungeons." + dungeon + ".enabled", enabled);
+    }
+
+    public static void save() {
         plugin.getServerData().save();
+    }
+
+    public static List<String> getActiveDungeons() {
+        return plugin.getServerData().getConfigurationSection("dungeons").getKeys(false).stream().filter((e) -> Dungeon.get(e).isEnabled()).collect(Collectors.toList());
     }
 
     public static Set<String> getDungeons() {

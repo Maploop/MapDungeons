@@ -20,7 +20,7 @@ public class ConfigCommand extends DCommand
             sender.getPlayer().performCommand("dungeons help");
             return;
         }
-        new ConfigGUI(new Dungeon(args[1])).open(sender.getPlayer());
+        new ConfigGUI(Dungeon.get(args[1])).open(sender.getPlayer());
     }
 
     @Override

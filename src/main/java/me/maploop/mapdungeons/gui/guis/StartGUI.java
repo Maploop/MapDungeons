@@ -27,8 +27,8 @@ public class StartGUI extends GUI
         border(SUtil.getStack(Material.BLACK_STAINED_GLASS_PANE, 0).build());
         set(GUIClickableItem.getCloseItem(31));
 
-        for (int i = 0; i < ServerData.getDungeons().size(); i++) {
-            String dung = new ArrayList<>(ServerData.getDungeons()).get(i);
+        for (int i = 0; i < ServerData.getActiveDungeons().size(); i++) {
+            String dung = new ArrayList<>(ServerData.getActiveDungeons()).get(i);
             int finalI = i;
             set(new GUIClickableItem()
             {

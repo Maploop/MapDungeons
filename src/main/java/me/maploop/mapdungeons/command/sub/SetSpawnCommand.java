@@ -27,6 +27,6 @@ public class SetSpawnCommand extends DCommand
 
     @Override
     public List<String> tabCompleters(CommandSender sender, String alias, String[] args) {
-        return new ArrayList<>(ServerData.getDungeons());
+        return new ArrayList<>(ServerData.getActiveDungeons());
     }
 }
