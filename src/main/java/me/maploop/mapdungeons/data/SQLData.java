@@ -76,6 +76,17 @@ public class SQLData
         return all.get() / sessions.size();
     }
 
+    public void deleteSessions(String map) {
+        try (Connection connection = plugin.sql.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE_SESSION);
+            statement.setString(1, map);
+
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public int getDeaths(UUID uuid) {
         try (Connection connection = MapDungeons.getPlugin().sql.getConnection()) {
 
@@ -231,4 +242,5 @@ public class SQLData
     private final String GET_SESSION = "SELECT * FROM `sessions` WHERE `id`=?";
     private final String GET_ALL = "SELECT * FROM `dungeons`";
     private final String GET_ALL_SESSIONS = "SELECT * FROM `sessions`";
+    private final String DELETE_SESSION = "DELETE FROM `sessions` WHERE `map`=?";
 }

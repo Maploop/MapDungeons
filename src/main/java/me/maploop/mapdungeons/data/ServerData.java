@@ -103,4 +103,8 @@ public class ServerData
     public static Set<String> getDungeons() {
         return plugin.getServerData().getConfigurationSection("dungeons").getKeys(false);
     }
+
+    public static void delete(String section) {
+        plugin.getServerData().set("dungeons." + section, null);
+    }
 }

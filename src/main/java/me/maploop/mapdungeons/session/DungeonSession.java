@@ -64,7 +64,7 @@ public class DungeonSession
     }
 
     public long getStartTime() {
-        return Long.parseLong(getSerializedKillTimestamps().split(";")[0]);
+        return killTimestamps.get(0);
     }
 
     public static DungeonSession New(String map, UUID owner) {
@@ -74,6 +74,7 @@ public class DungeonSession
 
     public void start() {
         ACTIVE_SESSIONS.put(owner, this);
+        killTimestamps.add(System.currentTimeMillis());
 
         // Handle player inventory kit etc.
         Dungeon dungeon = Dungeon.get(map);
@@ -88,7 +89,6 @@ public class DungeonSession
         Bukkit.getServer().getPluginManager().callEvent(new PlayerJoinDungeonEvent(Bukkit.getPlayer(owner), dungeon, this));
 
         AtomicLong loop = new AtomicLong(0);
-        killTimestamps.add(System.currentTimeMillis());
         task = new BukkitRunnable() {
             @Override
             public void run() {
