@@ -11,6 +11,7 @@ commands:
   cooldown: "&cThis command is on a cooldown for {cd} more seconds!"
   sent-lobby: "&aYou were sent to the lobby!"
   help-format: "&b{command} &7{aliases} &8- &f{description}"
+  player-not-found: "&cNo player found with username \"{username}\"!"
 config:
   dungeon-created: "&aSuccessfully created dungeon with name \"{dungeon}\"!"
   dungeon-spawn-set: "&aSet the spawn point of \"{dungeon}\" to &e{location}&a."
@@ -19,6 +20,10 @@ config:
   teleport: "&aTeleported!"
   spawner-added: "&aAdded a spawner to \"{dungeon}\"!"
   spawner-deleted: "&cDeleted a spawner from \"{dungeon}\""
+  invalid-entity: "&cInvalid entity type!"
+  dungeon-kit-set: "&aSuccessfully modified the kit of \"{dungeon}\""
 game:
   starting: "&aStarting dungeon in &e{seconds} &aseconds."
   dungeon-not-found: "&cNo dungeon found by the name of \"{dungeon}\"!"
+  dungeon-completed: "&aYou successfully completed dungeon \"{dungeon}\"!"
+  dungeon-started: "&a&lYou are now playing \"{dungeon}\"!\n&eSlay &c{objective} &emobs to compete the dungeon!"

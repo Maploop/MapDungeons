@@ -4,6 +4,7 @@ import me.maploop.mapdungeons.data.ServerData;
 import me.maploop.mapdungeons.gui.GUI;
 import me.maploop.mapdungeons.gui.GUIOpenEvent;
 import me.maploop.mapdungeons.gui.guiitem.GUIClickableItem;
+import me.maploop.mapdungeons.session.DungeonSession;
 import me.maploop.mapdungeons.util.SUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -35,7 +36,7 @@ public class StartGUI extends GUI
                 @Override
                 public void run(InventoryClickEvent e) {
                     e.getWhoClicked().teleport(ServerData.getSpawnFor(dung));
-                    e.getWhoClicked().sendMessage("§aStarting in...");
+                    DungeonSession.New(dung, e.getWhoClicked().getUniqueId()).start();
                 }
 
                 @Override

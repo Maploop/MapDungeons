@@ -2,8 +2,10 @@ package me.maploop.mapdungeons.gui.guis;
 
 import me.maploop.mapdungeons.gui.GUI;
 import me.maploop.mapdungeons.gui.GUIOpenEvent;
+import me.maploop.mapdungeons.gui.guiitem.GUIChatQueryItem;
 import me.maploop.mapdungeons.gui.guiitem.GUIClickableItem;
 import me.maploop.mapdungeons.session.Dungeon;
+import me.maploop.mapdungeons.session.DungeonSpawner;
 import me.maploop.mapdungeons.util.Messages;
 import me.maploop.mapdungeons.util.SUtil;
 import org.bukkit.Location;
@@ -38,6 +40,92 @@ public class ConfigGUI extends GUI
     public void onOpen(GUIOpenEvent e) {
         Player player = e.getPlayer();
         border(SUtil.getStack(Material.BLACK_STAINED_GLASS_PANE, 0).build());
+
+        set(new GUIClickableItem()
+        {
+            @Override
+            public void run(InventoryClickEvent e) {
+                dungeon.setKit(e.getWhoClicked().getInventory().getContents());
+                dungeon.save();
+                player.sendMessage(Messages.get("config.dungeon-kit-set", Map.of("{dungeon}", dungeon.getName())));
+                player.closeInventory();
+            }
+
+            @Override
+            public int getSlot() {
+                return 22;
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return SUtil.getStack(Material.CHEST, 0).name("&aDungeon Kit").lore("&7These are the items the player receives", "&7when the dungeon starts!",
+                        "", "&eClick to copy inventory!", "&bRight-click to preview!").build();
+            }
+        });
+
+        set(new GUIChatQueryItem()
+        {
+            @Override
+            public GUI onQueryFinish(String query) {
+                int objective;
+                try {
+                    objective = Integer.parseInt(query);
+                } catch (Exception e) {
+                    player.sendMessage("§cInvalid number format!");
+                    return ConfigGUI.this;
+                }
+                dungeon.setKillsObjective(objective);
+                dungeon.save();
+                return ConfigGUI.this;
+            }
+
+            @Override
+            public void run(InventoryClickEvent e) {
+
+            }
+
+            @Override
+            public int getSlot() {
+                return 20;
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return SUtil.getStack(Material.FILLED_MAP, 0).name("&3Player Objective").lore("&7Reach &f" + dungeon.getKillsObjective() + " &7mob kills.", "", "&eClick to edit").build();
+            }
+        });
+
+        set(new GUIChatQueryItem()
+        {
+            @Override
+            public GUI onQueryFinish(String query) {
+                long num;
+                try {
+                    num = Long.parseLong(query);
+                } catch (Exception e) {
+                    player.sendMessage("§cInvalid number format!");
+                    return ConfigGUI.this;
+                }
+                dungeon.setDelayBetweenSpawners(num);
+                dungeon.save();
+                return ConfigGUI.this;
+            }
+
+            @Override
+            public void run(InventoryClickEvent e) {
+                e.getWhoClicked().sendMessage("§eEnter your value in SECONDS");
+            }
+
+            @Override
+            public int getSlot() {
+                return 24;
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return SUtil.getStack(Material.CLOCK, 0).name("&6Mob Spawn Delay").lore("&7Current: &f" + dungeon.getDelayBetweenSpawners() + "s", "", "&eClick to change!").build();
+            }
+        });
 
         set(new GUIClickableItem()
         {
@@ -127,9 +215,11 @@ public class ConfigGUI extends GUI
                 List<String> lore = new ArrayList<>();
 
                 if (dungeon.getMobSpawns().size() > 0) {
-                    for (int i = 0; i < 5; i++) {
-                        Location loc = dungeon.getMobSpawns().get(i);
-                        lore.add("&8- &f" + SUtil.prettify(loc));
+                    for (int i = 0; i < dungeon.getMobSpawns().size(); i++) {
+                        try {
+                            DungeonSpawner loc = dungeon.getMobSpawns().get(i);
+                            lore.add("&8- &f" + SUtil.prettify(loc.getLocation()));
+                        } catch (IndexOutOfBoundsException ignored) { }
                     }
                     if (dungeon.getMobSpawns().size() > 5)
                         lore.add("&fand " + (dungeon.getMobSpawns().size() - 5) + " more...");

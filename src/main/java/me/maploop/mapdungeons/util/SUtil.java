@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -333,5 +334,9 @@ public class SUtil {
             return str;
         });
         return string;
+    }
+
+    public static String toDate(long time) {
+        return new SimpleDateFormat("MM/dd/yy | hh:mm:ss").format(new Date(time));
     }
 }

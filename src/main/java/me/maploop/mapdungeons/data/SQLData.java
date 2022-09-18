@@ -2,6 +2,7 @@ package me.maploop.mapdungeons.data;
 
 import me.maploop.mapdungeons.MapDungeons;
 import me.maploop.mapdungeons.session.DungeonSession;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +94,7 @@ public class SQLData
         List<DungeonSession> sessions = new ArrayList<>();
         try (Connection connection = MapDungeons.getPlugin().sql.getConnection()) {
 
-            PreparedStatement statement = connection.prepareStatement(GET_ALL);
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_SESSIONS);
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
@@ -134,8 +135,16 @@ public class SQLData
         return false;
     }
 
-    public static void setMobKills(UUID uuid, int kills) {
+    public void setMobKills(UUID uuid, int kills) {
+        try (Connection connection = plugin.sql.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SET_MOB_KILLS);
+            statement.setInt(1, kills);
+            statement.setString(2, uuid.toString());
 
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void saveSession(DungeonSession session) {
@@ -155,14 +164,41 @@ public class SQLData
         }
     }
 
-    public void insertPlayer(UUID uuid) {
-        if (!exists(uuid)) {
+    public UUID getUUID(String user) {
+        try (Connection connection = MapDungeons.getPlugin().sql.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(GET_FROM_USER);
+            statement.setString(1, user.toLowerCase());
+            ResultSet set = statement.executeQuery();
+
+            return UUID.fromString(set.getString("id"));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getUsername(UUID uuid) {
+        try (Connection connection = MapDungeons.getPlugin().sql.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(GET);
+            statement.setString(1, uuid.toString());
+            ResultSet set = statement.executeQuery();
+
+            return set.getString("username");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public void insertPlayer(Player uuid) {
+        if (!exists(uuid.getUniqueId())) {
             MapDungeons.logger().info("Could not find a profile for \"" + uuid + "\"! Creating one right now...");
             try (Connection connection = plugin.sql.getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(INSERT);
-                statement.setString(1, uuid.toString());
-                statement.setInt(2, 0);
+                statement.setString(1, uuid.getUniqueId().toString());
+                statement.setString(2, uuid.getName().toLowerCase());
                 statement.setInt(3, 0);
+                statement.setInt(4, 0);
 
                 statement.execute();
             } catch (SQLException ex) {
@@ -173,6 +209,7 @@ public class SQLData
 
     private final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `dungeons` (" +
             "`id` TEXT," +
+            "`username` TEXT," +
             "`kills` INT(32)," +
             "`deaths` INT(32))";
 
@@ -183,13 +220,15 @@ public class SQLData
             "`kills` INT(32)," +
             "`timestamps` TEXT)";
 
-    private final String INSERT = "INSERT INTO `dungeons` (`id`, `kills`, `deaths`) VALUES (?, ?, ?)";
-    private final String INSERT_SESSION = "INSERT INTO `sessions` (`id`, `owner`, `map`, `kills`, `timestamps`) VALUES (?, ?, ?)";
+    private final String INSERT = "INSERT INTO `dungeons` (`id`, `username`, `kills`, `deaths`) VALUES (?, ?, ?, ?)";
+    private final String INSERT_SESSION = "INSERT INTO `sessions` (`id`, `owner`, `map`, `kills`, `timestamps`) VALUES (?, ?, ?, ?, ?)";
     private final String SET_MOB_KILLS = "UPDATE `dungeons` SET `kills`=? where `id`=?";
     private final String SET_DEATHS = "UPDATE `dungeons` SET `deaths`=? where `id`=?";
     private final String SET_SESSIONS = "UPDATE `dungeons` SET `sessions`=? where `id`=?";
 
     private final String GET = "SELECT * FROM `dungeons` WHERE `id`=?";
+    private final String GET_FROM_USER = "SELECT * FROM `dungeons` WHERE `username`=?";
     private final String GET_SESSION = "SELECT * FROM `sessions` WHERE `id`=?";
     private final String GET_ALL = "SELECT * FROM `dungeons`";
+    private final String GET_ALL_SESSIONS = "SELECT * FROM `sessions`";
 }

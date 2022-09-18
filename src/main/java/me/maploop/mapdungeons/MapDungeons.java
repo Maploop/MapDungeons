@@ -4,8 +4,10 @@ import lombok.Getter;
 import me.maploop.mapdungeons.command.CommandLoader;
 import me.maploop.mapdungeons.command.DCommand;
 import me.maploop.mapdungeons.data.SQLData;
+import me.maploop.mapdungeons.session.DungeonSpawner;
 import me.maploop.mapdungeons.util.Config;
 import org.bukkit.command.CommandMap;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -76,5 +78,9 @@ public final class MapDungeons extends JavaPlugin
 
     public static Logger logger() {
         return plugin.getServer().getLogger();
+    }
+
+    static {
+        ConfigurationSerialization.registerClass(DungeonSpawner.class, "Spawner");
     }
 }
