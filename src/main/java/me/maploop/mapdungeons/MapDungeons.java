@@ -16,34 +16,31 @@ import java.util.logging.Logger;
 
 public final class MapDungeons extends JavaPlugin
 {
-    public static final String PLUGIN_VERSION = "1.0.0";
+    public static final String PLUGIN_VERSION = "1.0-SNAPSHOT";
 
     public static MapDungeons plugin;
 
     public CommandMap commandMap;
-    public CommandLoader cl;
+    public CommandLoader commandLoader;
     public SQLData sql;
     @Getter
     public Config serverData;
-    @Getter
     public Config messages;
+    public Config config;
 
     @Override
     public void onEnable() {
         plugin = this;
 
-        cl = new CommandLoader();
+        commandLoader = new CommandLoader();
         loadCommands();
         loadListeners();
 
-        sql = new SQLData();
         serverData = new Config("serverdata.yml");
         messages = new Config("messages.yml");
-    }
+        config = new Config("config.yml");
 
-    @Override
-    public void onDisable() {
-
+        sql = new SQLData();
     }
 
     private void loadCommands() {
@@ -53,7 +50,7 @@ public final class MapDungeons extends JavaPlugin
         for (Class<? extends DCommand> l : reflection.getSubTypesOf(DCommand.class)) {
             try {
                 DCommand command = l.newInstance();
-                cl.register(command);
+                commandLoader.register(command);
             } catch (InstantiationException | IllegalAccessException ex) {
                 ex.printStackTrace();
             }

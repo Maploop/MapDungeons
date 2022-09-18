@@ -9,7 +9,7 @@ import java.util.Map;
 public class Messages
 {
     public static String get(String path, Map<String, Object> placeholders) {
-        final String[] msg = {MapDungeons.getPlugin().getMessages().getString(path)};
+        final String[] msg = {MapDungeons.getPlugin().messages.getString(path)};
         placeholders.forEach((k, v) -> msg[0] = msg[0].replace(k, String.valueOf(v)));
         return SUtil.translateColorWords(msg[0]);
     }

@@ -17,6 +17,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
+/*
+ *  Utility class taken from previous code from discord.gg/atlasmc
+ */
 @Getter
 public class Hologram {
 

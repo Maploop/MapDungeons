@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ *  Utility class taken from previous code from discord.gg/atlasmc
+ */
 public class ReflectionHelper {
     public static void setValue(Object obj, String name, Object value) {
         try {

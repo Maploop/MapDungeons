@@ -6,16 +6,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public class Config extends YamlConfiguration {
-    private final MapDungeons plugin;
     private final File file;
 
     public Config(File parent, String name) {
-        this.plugin = MapDungeons.getPlugin();
         this.file = new File(parent, name);
 
         if (!file.exists()) {
             options().copyDefaults(true);
-            plugin.saveResource(name, false);
+            MapDungeons.getPlugin().saveResource(name, false);
         }
         load();
     }

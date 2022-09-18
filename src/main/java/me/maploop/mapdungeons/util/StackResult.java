@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ *  Utility class taken from previous code from discord.gg/atlasmc
+ */
 public class StackResult {
     private final ItemStack stack;
 

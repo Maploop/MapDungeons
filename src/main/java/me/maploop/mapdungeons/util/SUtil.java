@@ -25,6 +25,9 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ *  Utility class taken from previous code from discord.gg/atlasmc
+ */
 public class SUtil {
     public static ItemStack getSkull(String playerName, ItemStack stack) {
         Location loc = new Location(Bukkit.getServer().getWorlds().get(0), 1000, 200, 1000);

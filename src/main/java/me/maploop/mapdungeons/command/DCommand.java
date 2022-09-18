@@ -16,7 +16,7 @@ import java.util.*;
 @Getter
 public abstract class DCommand implements CommandExecutor, TabCompleter
 {
-    private static final Map<UUID, HashMap<DCommand, Long>> CMD_COOLDOWN = new HashMap<>();
+    private static final Map<UUID, HashMap<String, Long>> CMD_COOLDOWN = new HashMap<>();
     public static final String COMMAND_SUFFIX = "Command";
 
     private final CommandParameters params;
@@ -77,7 +77,7 @@ public abstract class DCommand implements CommandExecutor, TabCompleter
                 return false;
             }
 
-            for (DCommand c : MapDungeons.getPlugin().cl.commands) {
+            for (DCommand c : MapDungeons.getPlugin().commandLoader.commands) {
                 if (c.getName().equals(args[0])) {
                     this.cmd = c;
                 }
@@ -96,17 +96,17 @@ public abstract class DCommand implements CommandExecutor, TabCompleter
             }
 
             if (cmd instanceof CommandCooldown) {
-                HashMap<DCommand, Long> cooldowns = new HashMap<>();
+                HashMap<String, Long> cooldowns = new HashMap<>();
                 if (CMD_COOLDOWN.containsKey(((Player) sender).getUniqueId())) {
                     cooldowns = CMD_COOLDOWN.get(((Player) sender).getUniqueId());
-                    if (cooldowns.containsKey(cmd)) {
-                        if (System.currentTimeMillis() - cooldowns.get(cmd) < ((CommandCooldown) cmd).getCooldown()) {
-                            Messages.get("commands.cooldown", Map.ofEntries(Map.entry("{cd}", String.valueOf((double) (System.currentTimeMillis() - cooldowns.get(cmd)) / 1000))));
+                    if (cooldowns.containsKey(cmd.getName())) {
+                        if (System.currentTimeMillis() - cooldowns.get(cmd.getName()) < ((CommandCooldown) cmd).getCooldown()) {
+                            Messages.get("commands.cooldown", Map.ofEntries(Map.entry("{cd}", String.valueOf((double) (System.currentTimeMillis() - cooldowns.get(cmd.getName())) / 1000))));
                             return false;
                         }
                     }
                 }
-                cooldowns.put(cmd, System.currentTimeMillis() + ((CommandCooldown) cmd).getCooldown());
+                cooldowns.put(cmd.getName(), System.currentTimeMillis() + ((CommandCooldown) cmd).getCooldown());
                 CMD_COOLDOWN.put(((Player) sender).getUniqueId(), cooldowns);
             }
 
@@ -118,11 +118,11 @@ public abstract class DCommand implements CommandExecutor, TabCompleter
         public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
             if (args.length <= 1) {
                 List<String> list = new ArrayList<>();
-                MapDungeons.getPlugin().cl.commands.forEach(entry -> list.add(entry.name));
+                MapDungeons.getPlugin().commandLoader.commands.forEach(entry -> list.add(entry.name));
 
                 return list;
             } else {
-                for (DCommand c : MapDungeons.getPlugin().cl.commands) {
+                for (DCommand c : MapDungeons.getPlugin().commandLoader.commands) {
                     if (c.getName().equals(args[0])) {
                         this.cmd = c;
                         return cmd.tabCompleters(sender, alias, args);

@@ -2,6 +2,7 @@ package me.maploop.mapdungeons.data;
 
 import me.maploop.mapdungeons.MapDungeons;
 import me.maploop.mapdungeons.session.DungeonSession;
+import me.maploop.mapdungeons.util.Config;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -36,8 +37,17 @@ public class SQLData
 
     public Connection getConnection() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+            Config config = MapDungeons.getPlugin().config;
+            String className = "org.sqlite.JDBC";
+            String connectionAddress = "jdbc:sqlite:" + file.getAbsolutePath();
+
+            if (config.getString("used-database").toLowerCase().equals("mysql")) {
+                className = "com.mysql.jdbc.Driver";
+                connectionAddress = "jdbc:mysql://" + config.getString("mysql.address") + "/" + config.getString("mysql.database");
+            }
+
+            Class.forName(className);
+            Connection connection = DriverManager.getConnection(connectionAddress);
             if (connection != null) {
                 PreparedStatement prp = connection.prepareStatement(CREATE_TABLE);
                 PreparedStatement prp2 = connection.prepareStatement(CREATE_TABLE_SESSIONS);

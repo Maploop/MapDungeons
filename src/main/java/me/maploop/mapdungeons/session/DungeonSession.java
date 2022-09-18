@@ -30,8 +30,8 @@ public class DungeonSession
     private final UUID owner;
     private final String map;
     private final List<Long> killTimestamps;
+    private final int killsObjective;
     private int kills;
-    private int killsObjective;
 
     private final List<Entity> entities;
     private BukkitTask task;

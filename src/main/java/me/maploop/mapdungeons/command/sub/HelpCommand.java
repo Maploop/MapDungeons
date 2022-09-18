@@ -21,7 +21,7 @@ public class HelpCommand extends DCommand implements CommandCooldown
     public void run(CommandSource sender, String[] args) {
         send("&c&lMapDungeons - &ev" + MapDungeons.PLUGIN_VERSION);
         send("");
-        for (DCommand cmd : MapDungeons.getPlugin().cl.commands) {
+        for (DCommand cmd : MapDungeons.getPlugin().commandLoader.commands) {
             if (sender.getPlayer().hasPermission(cmd.getPermission())) {
                 send(Messages.get("commands.help-format",
                         Map.ofEntries(

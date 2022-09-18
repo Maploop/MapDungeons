@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
+/*
+ *  Utility class taken from previous code from discord.gg/atlasmc
+ */
 @Getter
 public class ChatQuery
 {
